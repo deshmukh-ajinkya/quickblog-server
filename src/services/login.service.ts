@@ -36,7 +36,9 @@ export const loginService = async (req: Request, res: Response): Promise<object>
   // Set HttpOnly cookie
   res.cookie('token', token, {
     httpOnly: true,
-    maxAge: 6 * 24 * 60 * 60 * 1000 //  6 days in milliseconds || 5000 for 5 seconds
+    secure: true,
+    sameSite: 'none',
+    maxAge: 5000 // 6 * 24 * 60 * 60 * 1000  6 days in milliseconds || 5000 for 5 seconds
   });
 
   return { message: 'Login successful', success: true };
