@@ -1,13 +1,14 @@
 import express from 'express';
 import { connectDB } from './utils';
 import { configDotenv } from 'dotenv';
-import { cookiesParser, dataParser } from './middlewares';
+import { cookiesParser, corsConfig, dataParser } from './middlewares';
 import routes from './routes';
 configDotenv();
 
 const app = express();
 
 /* Apply middlewares */
+app.use(corsConfig);
 app.use(cookiesParser);
 app.use(dataParser);
 app.use(routes);
