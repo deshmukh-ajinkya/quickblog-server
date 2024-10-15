@@ -4,7 +4,7 @@ import { loginService } from '../services';
 
 export const loginController = async (request: Request, response: Response): Promise<void> => {
   try {
-    const data = await loginService(request, response);
+    const data = await loginService(request);
     response.status(statusCode.ok).json(data);
   } catch (error) {
     response.status(statusCode.internal_server_error).json({
