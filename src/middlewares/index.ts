@@ -1,5 +1,5 @@
 import { authenticate } from './authenticate.middleware';
 import { corsConfig } from './cors.middleware';
-import { cookiesParser, dataParser } from './parser.middleware';
+import { dataParser } from './parser.middleware';
 
-export { corsConfig, dataParser, cookiesParser, authenticate };
+export { corsConfig, dataParser, authenticate };

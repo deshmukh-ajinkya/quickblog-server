@@ -1,30 +1,39 @@
 import { Request as ExpressRequest, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 configDotenv();
-import { JwtPayload } from 'jsonwebtoken';
 
 interface CustomRequest extends ExpressRequest {
-  user?: string | JwtPayload;
+  user?: string | JwtPayload; // Custom type to store decoded user info
 }
 
-export const authenticate = (req: ExpressRequest, res: Response, next: NextFunction): object => {
-  const token = req.cookies.token;
+// Middleware to authenticate the user using JWT from Authorization header
+export const authenticate = (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+): Response | void => {
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
+  if (!authHeader) {
     return res.status(401).json({ message: 'Authentication required', success: false });
   }
 
+  const token = authHeader.split(' ')[1]; // Extract token from 'Bearer <token>' format
+
+  if (!token) {
+    return res.status(401).json({ message: 'Token missing', success: false });
+  }
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    (req as CustomRequest).user = decoded; // Type assertion to CustomRequest
-    next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!); // Verify the token
+    req.user = decoded; // Attach decoded user info to the request
+    next(); // Proceed to the next middleware/controller
   } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      res.clearCookie('token');
+    if (error instanceof TokenExpiredError) {
       return res
         .status(401)
-        .json({ message: 'Session expired, please log in again', success: false });
+        .json({ message: 'Token expired, please log in again', success: false });
     }
     return res.status(403).json({ message: 'Invalid token', success: false });
   }

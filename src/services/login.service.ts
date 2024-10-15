@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { UserModel } from '../model';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils';
@@ -6,9 +6,9 @@ import jwt from 'jsonwebtoken';
 import { configDotenv } from 'dotenv';
 configDotenv();
 
-export const loginService = async (req: Request, res: Response): Promise<object> => {
+export const loginService = async (req: Request): Promise<object> => {
   const { email, password } = req.body;
-  const tokenExist = req.cookies.token;
+  const tokenExist = req.headers.authorization?.split(' ')[1]; // Check token from Authorization header (Bearer token)
 
   // Check already exist
   if (tokenExist) {
@@ -33,13 +33,9 @@ export const loginService = async (req: Request, res: Response): Promise<object>
   // Generate JWT token
   const token = generateToken(user._id);
 
-  // Set HttpOnly cookie
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    maxAge: 5000 // 6 * 24 * 60 * 60 * 1000  6 days in milliseconds || 5000 for 5 seconds
-  });
-
-  return { message: 'Login successful', success: true };
+  return {
+    token: token,
+    message: 'Login successful',
+    success: true
+  };
 };
