@@ -11,7 +11,7 @@ export const getAllBlogsService = async (): Promise<object> => {
     id: blog._id,
     title: blog.title,
     content: blog.content,
-    author:blog.author,
+    author: blog.author,
     bannerImg: blog.bannerImg,
     category: blog.category,
     likesCount: blog.likes.length, // Number of likes
