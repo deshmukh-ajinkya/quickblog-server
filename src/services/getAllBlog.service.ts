@@ -9,9 +9,10 @@ export const getAllBlogsService = async (): Promise<object> => {
   // Format the data if needed, for example, returning only the necessary fields
   return blogs.map((blog) => ({
     id: blog._id,
+    title: blog.title,
+    content: blog.content,
     author: blog.author,
     bannerImg: blog.bannerImg,
-    title: blog.title,
     category: blog.category,
     likesCount: blog.likes.length, // Number of likes
     commentsCount: blog.comments.length, // Number of comments
