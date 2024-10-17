@@ -1,10 +1,20 @@
-import { Request } from 'express';
+import { Request as ExpressRequest } from 'express';
 import { BlogModel } from '../model';
+import multer from 'multer';
+
+// Extend the Express Request interface
+declare module 'express-serve-static-core' {
+  interface Request {
+    file?: multer.File; // Add the file property for single file uploads
+    files?: multer.File[]; // Add the files property for multiple file uploads
+  }
+}
 
 // The service to create a blog
-export const createBlogService = async (request: Request): Promise<object> => {
+export const createBlogService = async (request: ExpressRequest): Promise<object> => {
   try {
-    const { author, bannerImg, title, content, category } = request.body;
+    const { author, title, content, category } = request.body;
+    const bannerImg = request.file?.path; // Get the uploaded file path
 
     if (!author || !bannerImg || !title || !content || !category) {
       throw new Error('All fields (author, bannerImg, title, content, category) are required.');
@@ -13,7 +23,7 @@ export const createBlogService = async (request: Request): Promise<object> => {
     // Create a new blog post
     const newBlog = new BlogModel({
       author,
-      bannerImg,
+      bannerImg, // Save the file path of the uploaded image
       title,
       content,
       category

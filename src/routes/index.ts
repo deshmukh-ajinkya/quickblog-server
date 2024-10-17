@@ -15,7 +15,7 @@ import {
   updateBlogController,
   getBlogInsightController
 } from '../controllers';
-import { authenticate } from '../middlewares';
+import { authenticate, upload } from '../middlewares';
 
 const routes = express.Router();
 
@@ -30,8 +30,8 @@ routes.post(uri.get_all_blog, authenticate, getAllBlogController);
 routes.post(uri.get_comment, authenticate, getCommentController);
 routes.put(uri.like_blog, authenticate, likeBlogController);
 routes.post(uri.add_comment, authenticate, addCommentController);
-routes.post(uri.create_blog, authenticate, createBlogController);
-routes.put(uri.update_blog, authenticate, updateBlogController);
+routes.post(uri.create_blog, authenticate, upload.single('bannerImg'), createBlogController);
+routes.put(uri.update_blog, authenticate, upload.single('bannerImg'), updateBlogController);
 routes.delete(uri.delete_blog, authenticate, deleteBlogController);
 routes.post(uri.get_blog_insight, authenticate, getBlogInsightController);
 
